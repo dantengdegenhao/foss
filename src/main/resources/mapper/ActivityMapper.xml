@@ -1,0 +1,25 @@
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.foss.mapper.ActivityDao">
+    <select id="queryActivity" parameterType="Activity" resultType="Activity">
+        select * from activity where deleteTag = 0
+        <if test="aname!=null and aname!='">
+            and aname like concat('%',#{aname},'%')
+        </if>
+    </select>
+    <insert id="insertActivity" parameterType="Activity">
+        insert into activity
+        values(0,#{aname},#{typeName},#{foodName},#{discount},#{startDate},#{endDate},#{addDate},#{updateDate},#{operator},0)
+    </insert>
+    <update id="updateActivity" parameterType="Activity">
+        update activity
+        set aname=#{aname},typeName=#{typeName},discount=#{discount},startDate = #{startDate},endDate=#{endDate},addDate=#{addDate},updateDate = #{updateDate},operator=#{operator}
+        where aid = #{aid}
+    </update>
+    <update id="deleteActivity" parameterType="Activity">
+        update activity
+        set deleteTag=1,operator=#{operator},updateDate=#{updateDate}
+        where aid=#{aid}
+    </update>
+</mapper>

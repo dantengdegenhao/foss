@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.foss.mapper.OrderDao">
+    <select id="queryOrder" parameterType="Order" resultType="Order">
+        select * from foss.order o where deleteTag = 0
+        <if test="statusId!=null and statusId!=''">
+            and statusId = #{statusId}
+        </if>
+        <if test="orderNum !=null and orderNum!=''">
+            AND orderNum = #{orderNum}
+        </if>
+        <if test="userId != null and userId!=''">
+            AND userId = #{userId}
+        </if>
+        <if test="orderStatus != null and orderStatus!=''">
+            AND orderStatus = #{orderStatus}
+        </if>
+    </select>
+    <resultMap id="orderDetailed" type="OrderDetailed">
+        <id column="id" property="id"/>
+        <result column="orderId" property="orderId"/>
+        <result column="foodId" property="foodId"/>
+        <result column="foodNum" property="foodNum"/>
+        <result column="foodPrice" property="foodPrice"/>
+        <association property="order" javaType="Order">
+            <id column="orderId" property="orderId"/>
+            <result column="orderNum" property="orderNum"/>
+            <result column="createDate" property="createDate"/>
+            <result column="userId" property="userId"/>
+            <result column="orderPrice" property="orderPrice"/>
+            <result column="customerName" property="customerName"/>
+            <result column="customerAddress" property="customerAddress"/>
+            <result column="customerPhone" property="customerPhone"/>
+            <result column="deliverDate" property="deliverDate"/>
+            <result column="endDate" property="endDate"/>
+        </association>
+        <association property="foodInformation" javaType="FoodInformation">
+            <id column="foodId" property="foodId"/>
+            <result column="foodName" property="foodName"/>
+            <result column="foodPrice" property="foodPrice"/>
+        </association>
+    </resultMap>
+    <select id="queryDetailed" parameterType="Integer" resultMap="orderDetailed">
+        select *
+        from orderDetailed od
+        inner join foss.order o
+        on od.orderId = o.orderId
+        inner join foodInformation f
+        on od.foodId = f.foodId
+        where od.orderId=#{orderId}
+    </select>
+    <insert id="createOrder" parameterType="Order" useGeneratedKeys="true"  keyProperty="orderId">
+        insert into foss.order
+        values(0,#{orderNum},#{orderPrice},#{userId},#{customerName},#{customerAddress},#{customerPhone},1,#{orderStatus},#{deliverNum},#{createDate},null,null,null,0)
+    </insert>
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into orderDetailed
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (0,#{item.orderId},#{item.foodId},#{item.foodNum})
+        </foreach>
+    </insert>
+    <update id="payOrder" parameterType="Order">
+        update foss.order
+        set orderStatus='未发货',payDate=#{payDate}
+        where orderId=#{orderId}
+    </update>
+    <update id="deliverOrder" parameterType="Order">
+        update foss.order
+        set orderStatus='快递中',deliverNum=#{deliverNum},deliverDate=#{deliverDate}
+        where orderId=#{orderId}
+    </update>
+    <update id="backOrder" parameterType="Order">
+        update foss.order
+        set orderStatus='退款中',endDate=#{endDate}
+        where orderId=#{orderId}
+    </update>
+    <update id="endOrder" parameterType="Order">
+        update foss.order
+        set endDate = #{endDate},statusId=1
+        <choose>
+            <when test="orderStatus=='退款中'">
+                ,orderStatus='已退款'
+            </when>
+            <when test="orderStatus=='未发货' or orderStatus=='未付款'">
+                ,orderSTtus='已取消'
+            </when>
+            <otherwise>
+                ,orderSTtus='已完成'
+            </otherwise>
+        </choose>
+        where orderId=#{orderId}
+    </update>
+    <update id="updateOrder" parameterType="Order">
+        update foss.order
+        set orderPrice=#{orderPrice},customerName=#{customerName},customerAddress=#{customerAddress},customerPhone=#{customerPhone}
+        where orderId=#{orderId}
+    </update>
+</mapper>

@@ -1,0 +1,302 @@
+    <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- Mirrored from www.zi-han.net/theme/hplus/404.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:19:52 GMT -->
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>未完成订单管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="./css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet" th:href="@{/static/css/bootstrap.min14ed.css}" >
+    <link href="./css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet" th:href="@{/static/css/font-awesome.min93e3.css}">
+    <link href="./css/animate.min.css" rel="stylesheet" th:href="@{/static/css/animate.min.css}">
+    <link href="./css/style.min862f.css?v=4.1.0" rel="stylesheet" th:href="@{/static/css/style.min862f.css}">
+    <link href="./css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet" th:href="@{/static/css/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <style type="text/css">
+        .wrapper{
+            margin-top:20px;
+            margin-left:20px;
+        }
+    </style>
+</head>
+<body class="gray-bg ">
+<div class="wrapper">
+    <div class="search-bar">
+        <input type="text" id="orderNum" placeholder="订单编号">
+        <input type="text" id="userId" placeholder="用户ID">
+        <select id="orderStatus">
+            <option></option>
+            <option>未付款</option>
+            <option>未发货</option>
+            <option>快递中</option>
+            <option>退货中</option>
+        </select>
+        <button class="btn btn-primary" type="button" id="btn_search">搜索</button>
+    </div>
+    <div class="search-result">
+        <h4 class="example-title">查询结果</h4>
+        <table id="mytab"></table>
+    </div>
+</div>
+<script src="./js/jquery.min.js?v=2.1.4" th:src="@{/static/js/jquery.min.js}"></script>
+<script src="./js/bootstrap.min.js?v=3.3.6" th:src="@{/static/js/bootstrap.min.js}"></script>
+<script src="./js/content.min.js?v=1.0.0" th:src="@{/static/js/content.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/bootstrap-table.min.js" th:src="@{/static/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js" th:src="@{/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="./js/demo/bootstrap-table-demo.min.js" th:src="@{static/js/demo/bootstrap-table-demo.min.js}"></script>
+<script th:src="@{static/js/plugins/layer/layer.min.js}"></script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script>
+    $('#mytab').bootstrapTable({
+        url: 'queryOrder/'+0,
+        method: 'GET',
+        queryParams: function(){
+            var orderNum = $('#orderNum').val();
+            var userId = $('#userId').val();
+            var orderStatus = $('#orderStatus').val();
+            var temp = {
+                orderNum: orderNum,
+                userId: userId,
+                orderStatus: orderStatus
+            };
+            return temp;
+        },
+        toolbar: "#toolbar",
+        sidePagination: "true",
+        striped: true, // 是否显示行间隔色
+        //search : "true",
+        uniqueId: "orderId",
+        pageNumber: 1,
+        pagination: true,
+        sidePagination: 'client',
+        pageSize: 10,
+        pageList: [10,15,20],
+        sortable: false, // 是否启用排序
+        columns: [
+            {
+                field: 'orderId',
+                title: 'id',
+                align: 'center',
+                valign: 'middle',
+
+            },{
+                field: 'orderNum',
+                title: '订单编号',
+                align: 'center',
+                valign: 'middle',
+
+            },
+            {
+                field: 'userId',
+                title: '用户ID',
+                align: 'center',
+                valign: 'middle',
+            }, {
+                field: 'createDate',
+                title: '下单时间',
+                align: 'center',
+                valign: 'middle',
+            },{
+                field: 'orderStatus',
+                title: '订单状态',
+                align: 'center',
+                valign: 'middle',
+
+            },
+            {
+                field: 'orderId',
+                title: '操作',
+                width: 120,
+                align: 'center',
+                valign: 'middle',
+                formatter: actionFormatter,
+            },
+
+        ]
+    });
+    function  showDetailed(value) {
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim layui-layer-molv', //加上边框
+            title: '订单详情',
+            area: ['300px', '500px'], //宽高
+            content:'<div id="orderDetailed">\n' +
+                '    <label>订单编号:</label><label id="result_orderNum"></label><br>\n' +
+                '    <label>下单时间:</label><label id="result_createDate"></label><br>\n' +
+                '    <label>订单价格:</label><input type="text" id="result_orderPrice" disabled="disabled"><br>\n' +
+                '    <label>买家:</label><label id="result_user"></label><br>\n' +
+                '    <label>收件人:</label><input type="text" id="result_customer" disabled="disabled"><br>\n' +
+                '    <label>收件地址:</label><input type="text" id="result_customerAddress" disabled="disabled"><br>\n' +
+                '    <label>联系电话:</label><input type="text" id="result_customerPhone" disabled="disabled"><br>\n' +
+                '    <div id="result_food">\n' +
+                '        <label>食品:</label>\n' +
+                '    </div>\n' +
+                '    <label>付款日期:</label><label id="result_payDate"></label><br>\n' +
+                '    <label>发货日期:</label><label id="result_deliverDate"></label><br>\n' +
+                '    <label>订单完成日期:</label><label id="result_endDate"></label>\n' +
+                '</div>',
+            success: function(){
+                $.ajax({
+                    async:true,
+                    type: 'get',
+                    url: 'queryDetailed/?orderId='+value,
+                    dataType : "json",
+                    success: function (result) {
+                        console.log(result)
+                           $('#result_orderNum').text(result[0].order.orderNum);
+                           $('#result_createDate').text(result[0].order.createDate);
+                           $('#result_orderPrice').val(result[0].order.orderPrice);
+                           $('#result_user').text(result[0].order.userId);
+                           $('#result_customer').val(result[0].order.customerName);
+                           $('#result_customerAddress').val(result[0].order.customerAddress);
+                           $('#result_customerPhone').val(result[0].order.customerPhone);
+                           $('#result_payDate').text(result[0].order.payDate);
+                           $('#result_deliverDate').text(result[0].order.deliverDate);
+                           $('#result_endDate').text(result[0].order.endDate);
+                           console.log(result);
+                           for(var i = 0;i<result.length;i++){
+                               $('#result_food').append(
+                                   '<br><label>名称:</label>'+result[i].foodInformation.foodName
+                                   +'<br><label>价格:</label>'+result[i].foodPrice
+                                   +'<br><label>数量:</label>'+result[i].foodNum
+                               )
+                           }
+                    }
+                });
+            },
+            btn: ['编辑','保存','关闭'],
+            yes: function (index,layero) {
+               $('#result_orderPrice').removeAttr('disabled');
+               $('#result_customer').removeAttr('disabled');
+               $('#result_customerAddress').removeAttr('disabled');
+               $('#result_customerPhone').removeAttr('disabled');
+            },
+            btn2: function (index,layero) {
+                var orderPrice = $('#result_orderPrice').val();
+                var customerName = $('#result_customer').val();
+                var customerAddress = $('#result_customerAddress').val();
+                var customerPhone = $('#result_customerPhone').val();
+                layer.confirm(
+                    '确定修改信息？',{
+                        skin:'layui-layer-rim layui-layer-molv',
+                        btn: ['确定','取消']
+                    }, function (index) {
+                        var data = {
+                            orderPrice: orderPrice,
+                            customerName: customerName,
+                            customerAddress: customerAddress,
+                            customerPhone: customerPhone
+                        };
+                        $.ajax({
+                            async:true,
+                            type: 'post',
+                            url: 'updateOrder/'+value,
+                            dataType : "json",
+                            contentType: 'application/json;charset=utf-8',
+                            data: JSON.stringify(data),
+                            success: function (result) {
+                                layer.msg(result.msg)
+                                $('#mytab').bootstrapTable('refresh');
+                                layer.close(index);
+                            },
+                            error: function () {
+                                layer.msg('异常');
+                            }
+                        });
+                    }, function () {
+
+                    }
+                )
+            }
+        });
+    }
+    function editByIds(value,msg) {
+        if(msg=='发货'){
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim layui-layer-molv', //加上边框
+                title: '订单详情',
+                area: ['300px', '150px'], //宽高
+                content: '<lable>物流单号:</lable><input type="text" id="deliverNum">',
+                btn: ['确定','取消'],
+                yes: function(index,layero){
+                    var data={
+                        deliverNum: $('#deliverNum').val()
+                    };
+                    $.ajax({
+                        async:true,
+                        type: 'post',
+                        url: 'deliverOrder/'+value,
+                        dataType : "json",
+                        contentType: 'application/json;charset=utf-8',
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            layer.msg(result.msg)
+                            $('#mytab').bootstrapTable('refresh');
+                            layer.close(index);
+                        },
+                        error: function () {
+                            layer.msg('异常');
+                        }
+                    });
+                },
+                btn2: function () {
+
+                }
+            });
+        }else if(msg=='退款'){
+            layer.confirm(
+                '确定退款？',{
+                    skin:'layui-layer-rim layui-layer-molv',
+                    btn: ['确定','取消']
+                }, function (index) {
+                    var data={
+                        orderStatus: '退款中'
+                    };
+                    $.ajax({
+                        async:true,
+                        type: 'post',
+                        url: 'endOrder/'+value,
+                        dataType : "json",
+                        contentType: 'application/json;charset=utf-8',
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            layer.msg(result.msg)
+                            $('#mytab').bootstrapTable('refresh');
+                            layer.close(index);
+                        },
+                        error: function () {
+                            layer.msg('异常');
+                        }
+                    });
+                }, function () {
+
+                }
+            )
+        }
+    }
+    //操作栏的格式化
+    function actionFormatter(value, row, index) {
+        var id = value;
+        var data = $('#mytab').bootstrapTable('getRowByUniqueId',id);
+        var result = "";
+        result += "<button class='btn btn-sm btn-primary'  onclick=\"showDetailed('" + id + "')\">查看</a>";
+        if(data.orderStatus=='未发货'){
+            result += "<button class='btn btn-sm btn-primary' style='margin-left: 5px' onclick=\"editByIds('" + id + "','发货')\">发货</a>";
+        }else if((data.orderStatus=='退款中')){
+            result += "<button class='btn btn-sm btn-primary' style='margin-left: 5px' onclick=\"editByIds('" + id + "','退款')\">退款</a>";
+        }
+        return result;
+    }
+    $(document).ready(function () {
+        $('#btn_search').click(function () {
+            $('#mytab').bootstrapTable('refresh');
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>蛋糕网在线商城</title>
+<link href="static/qiantai/images/css.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+<div class="head">
+  <div th:if="${session?.user!=null}">
+    欢迎你<a th:text="${session?.user.name}" style="color: #dd3e3e"></a><a th:href="@{logout}">退出登录</a>
+  </div>
+  <div th:if="${session?.user==null}">
+    游客欢迎您</a><a th:href="@{login}">登录</a>
+  </div>
+</div>
+<div class="nav"><ul>
+  <li><a href="index.html">首页</a></li>
+  <li><a href="goods3.html">商品页面</a></li>
+  <li><a href="">我的购物车</a></li>
+  <li><a href="cart.html">我的订单</a></li>
+</ul></div>
+<div class="main"><div class="title">
+  <h1>我的订单</h1></div>
+  
+  <div class="cart">
+ <div class="orderlist">
+   <form id="form1" name="form1" method="post" action="#">
+     <table width="100%" border="0" cellspacing="0" cellpadding="0">
+       <tr>
+         <td align="center" bgcolor="#EEEEEE">订单号</td>
+         <td align="center" bgcolor="#EEEEEE">商品信息</td>
+         <td align="center" bgcolor="#EEEEEE">&nbsp;</td>
+         <td align="center" bgcolor="#EEEEEE">价格</td>
+         <td align="center" bgcolor="#EEEEEE">数量</td>
+         <td align="center" bgcolor="#EEEEEE">小计</td>
+       </tr>
+       <tr>
+         <td><span th:text=""></span></td>
+         <td><img src="images/1.jpg" width="100" /></td>
+         <td>奥利奥</td>
+         <td>￥</td>
+         <td><label for="textfield"></label>
+          <input name="textfield" type="text" id="textfield" value="2" size="10" /></td>
+         <td>￥560</td>
+         <td>删除</td>
+       </tr>
+      </table>
+   </form>
+ </div>
+
+</div>
+
+<div class="foot"></div>    
+    
+</body>
+</html>

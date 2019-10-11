@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- Mirrored from www.zi-han.net/theme/hplus/404.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:19:52 GMT -->
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>活动管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="./css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet" th:href="@{/static/css/bootstrap.min14ed.css}">
+    <link href="./css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet"
+          th:href="@{/static/css/font-awesome.min93e3.css}">
+    <link href="./css/animate.min.css" rel="stylesheet" th:href="@{/static/css/animate.min.css}">
+    <link href="./css/style.min862f.css?v=4.1.0" rel="stylesheet" th:href="@{/static/css/style.min862f.css}">
+    <link href="./css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet"
+          th:href="@{/static/css/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <style type="text/css">
+        .wrapper {
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+        .search_input {
+            height: 35px;
+        }
+
+        #btn_add {
+            margin-left: 15px;
+        }
+
+        #btn_search {
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<div id="add_form" style="display: none">
+    <label>活动名称</label><input type="text" id="aname_input"><br>
+    <label>活动商品</label>
+    <select id="typeName">
+        <option>所有类别</option>
+    </select>
+    <select id="foodName">
+        <option>所有食品</option>
+    </select>
+    <label>开始时间:</label><input type="text" id="startDate">
+    <label>结束时间:</label><input type="text" id="endDate">
+</div>
+<body class="gray-bg ">
+<div class="wrapper">
+    <div class="search-bar">
+        <input class="search_input" type="text" id="search_sname" placeholder="活动名称">
+        <button class="btn btn-primary" type="button" id="btn_search">搜索</button>
+        <button class="btn btn-primary" type="button" id="btn_add">添加</button>
+    </div>
+    <div class="search-result">
+        <h4 class="example-title">查询结果</h4>
+        <table id="mytab"></table>
+    </div>
+</div>
+<script src="./js/jquery.min.js?v=2.1.4" th:src="@{/static/js/jquery.min.js}"></script>
+<script src="./js/bootstrap.min.js?v=3.3.6" th:src="@{/static/js/bootstrap.min.js}"></script>
+<script src="./js/content.min.js?v=1.0.0" th:src="@{/static/js/content.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/bootstrap-table.min.js"
+        th:src="@{/static/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"
+        th:src="@{/static/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="./js/demo/bootstrap-table-demo.min.js" th:src="@{static/js/demo/bootstrap-table-demo.min.js}"></script>
+<script th:src="@{static/js/plugins/layer/layer.min.js}"></script>
+<script th:src="@{static/js/plugins/layer/laydate/laydate.js}"></script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script>
+    laydate({
+        elem:'#startDate'
+    });
+    laydate({
+        elem: '#endDate'
+    });
+
+
+    $('#mytab').bootstrapTable({
+        url: 'querySupplier',
+        method: 'GET',
+        queryParmas: function () {
+            var temp = {
+                sname: $('#search_sname').val()
+            };
+            return temp;
+        },
+        toolbar: "#toolbar",
+        sidePagination: "true",
+        striped: true, // 是否显示行间隔色
+        //search : "true",
+        uniqueId: "aid",
+        pageNumber: 1,
+        pagination: true,
+        sidePagination: 'client',
+        pageSize: 10,
+        pageList: [10, 15, 20],
+        sortable: false, // 是否启用排序
+        columns: [
+            {
+                field: 'aid',
+                title: 'id',
+                align: 'center',
+                valign: 'middle',
+
+            },
+            {
+                field: 'aname',
+                title: '活动名称',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'addDate',
+                title: '添加时间',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'updateDate',
+                title: '修改时间',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'operator',
+                title: '操作员',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'aid',
+                title: '操作',
+                width: 120,
+                align: 'center',
+                valign: 'middle',
+                formatter: actionFormatter,
+            },
+
+        ]
+    });
+    function deleteByIds(value) {
+        layer.confirm(
+            '确定删除当前数据？', {
+                skin: 'layui-layer-rim layui-layer-molv',
+                btn: ['确定', '取消']
+            }, function (index) {
+                var data = '{"operator":"管理员"}';
+                $.ajax({
+                    async: true,
+                    type: 'post',
+                    url: 'deleteSupplier/' + value,
+                    dataType: "json",
+                    contentType: 'application/json;charset=utf-8',
+                    data: data,
+                    success: function (result) {
+                        layer.msg(result.msg)
+                        $('#mytab').bootstrapTable('refresh');
+                        layer.close(index);
+                    },
+                    error: function () {
+                        layer.msg('异常');
+                    }
+                });
+            }, function () {
+
+            }
+        )
+    }
+    function deleteByIds(value) {
+        layer.confirm(
+            '确定删除当前数据？', {
+                skin: 'layui-layer-rim layui-layer-molv',
+                btn: ['确定', '取消']
+            }, function (index) {
+                var data = '{"operator":"管理员"}';
+                $.ajax({
+                    async: true,
+                    type: 'post',
+                    url: 'deleteSupplier/' + value,
+                    dataType: "json",
+                    contentType: 'application/json;charset=utf-8',
+                    data: data,
+                    success: function (result) {
+                        layer.msg(result.msg)
+                        $('#mytab').bootstrapTable('refresh');
+                        layer.close(index);
+                    },
+                    error: function () {
+                        layer.msg('异常');
+                    }
+                });
+            }, function () {
+
+            }
+        )
+    }
+
+    function editByIds(value) {
+        var id = value;
+        var data = $('#mytab').bootstrapTable('getRowByUniqueId', id);
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim layui-layer-molv', //加上边框
+            title: '修改供应商信息',
+            area: ['300px', '250px'], //宽高
+            content: '<label>供应商名称</label><input type="text" id="sname"><br>' +
+                '<label>供应商地址</label><input type="text" id="saddress"><br>' +
+                '<label>供应商联系方式</label><input type="text" id="sphone">',
+            success: function () {
+                $('#sname').val(data.sname);
+                $('#saddress').val(data.saddress);
+                $('#sphone').val(data.sphone);
+            },
+            btn: ['修改', '取消'],
+            yes: function (index, layero) {
+                var sname = $('#sname').val();
+                var saddress = $('#saddress').val();
+                var sphone = $('#sphone').val();
+                var jsondata = '{"sname":"' + sname + '","saddress":"' + saddress + '","sphone":"' + sphone + '","operator":"管理员"}';
+                $.ajax({
+                    async: true,
+                    type: 'post',
+                    url: 'updateSupplier/' + id,
+                    dataType: "json",
+                    contentType: 'application/json;charset=utf-8',
+                    data: jsondata,
+                    success: function (result) {
+                        layer.msg(result.msg)
+                        $('#mytab').bootstrapTable('refresh');
+                        layer.close(index);
+                    },
+                    error: function () {
+
+                    }
+                });
+            },
+            btn2: function (index, layero) {
+
+            }
+        });
+    }
+
+    function actionFormatter(value, row, index) {
+        var id = value;
+        var result = "";
+        result += "<a href='javascript:;' class='btn btn-xs blue ' title='查看详情' onclick=\"editByIds('" + id + "')\"><span class='glyphicon glyphicon-search'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs blue' title='编辑' onclick=\"editByIds('" + id + "')\"><span class='glyphicon glyphicon-pencil'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs red'  title='删除' onclick=\"deleteByIds('" + id + "')\"><span class='glyphicon glyphicon-remove'></span></a>";
+        return result;
+    }
+
+    $(document).ready(function () {
+        $('#btn_add').click(function () {
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim layui-layer-molv', //加上边框
+                title: '添加新活动',
+                area: ['300px', '300px'], //宽高
+                content: $('#add_form'),
+                btn: ['添加', '取消'],
+                yes: function (index, layero) {
+                    $.ajax({
+                        async: true,
+                        type: 'post',
+                        url: 'insertSupplier',
+                        dataType: "json",
+                        contentType: 'application/json;charset=utf-8',
+                        data: jsondata,
+                        success: function (result) {
+                            layer.msg(result.msg)
+                            $('#mytab').bootstrapTable('refresh');
+                            layer.close(index);
+                        },
+                        error: function () {
+
+                        }
+                    });
+                },
+                btn2: function (index, layero) {
+
+                }
+            });
+        });
+        $('#btn_search').click(function () {
+            $('#mytab').bootstrapTable('refresh');
+        });
+    });
+</script>
+</body>
+</html>

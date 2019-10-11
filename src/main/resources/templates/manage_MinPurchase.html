@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- Mirrored from www.zi-han.net/theme/hplus/404.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:19:52 GMT -->
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>食品信息管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="./css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet" th:href="@{/static/houtai/css/bootstrap.min14ed.css}" >
+    <link href="./css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet" th:href="@{/static/houtai/css/font-awesome.min93e3.css}">
+    <link href="./css/animate.min.css" rel="stylesheet" th:href="@{/static/houtai/css/animate.min.css}">
+    <link href="./css/style.min862f.css?v=4.1.0" rel="stylesheet" th:href="@{/static/houtai/css/style.min862f.css}">
+    <link href="./css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet" th:href="@{/static/houtai/css/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <style type="text/css">
+        .wrapper{
+            margin-top:20px;
+            margin-left:20px;
+        }
+    </style>
+</head>
+<body class="gray-bg ">
+<div class="wrapper">
+    <div class="search-bar">
+        <input type="text" id="foodName" placeholder="食品名称">
+
+        <button class="btn btn-primary" type="button" id="btn_search">搜索</button>
+    </div>
+    <div class="search-result">
+        <h4 class="example-title">查询结果</h4>
+        <table id="mytab"></table>
+    </div>
+</div>
+<script src="./js/jquery.min.js?v=2.1.4" th:src="@{/static/houtai/js/jquery.min.js}"></script>
+<script src="./js/bootstrap.min.js?v=3.3.6" th:src="@{/static/houtai/js/bootstrap.min.js}"></script>
+<script src="./js/content.min.js?v=1.0.0" th:src="@{/static/houtai/js/content.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/bootstrap-table.min.js" th:src="@{/static/houtai/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+<script src="./js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js" th:src="@{/static/houtai/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script src="./js/demo/bootstrap-table-demo.min.js" th:src="@{static/houtai/js/demo/bootstrap-table-demo.min.js}"></script>
+<script th:src="@{static/houtai/js/plugins/layer/layer.min.js}"></script>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script>
+    $('#mytab').bootstrapTable({
+        url: '/stock',
+        method: 'GET',
+        queryParams: function(){
+            var foodName = $('#foodName').val();
+            var temp = {
+                foodName : foodName,
+            };
+            return temp;
+        },
+        toolbar: "#toolbar",
+        sidePagination: "true",
+        striped: true, // 是否显示行间隔色
+        //search : "true",
+        uniqueId: "id",
+        pageNumber: 1,
+        pagination: true,
+        sidePagination: 'client',
+        pageSize: 10,
+        pageList: [10,15,20],
+        sortable: false, // 是否启用排序
+        columns: [
+            {
+                field: 'id',
+                title: 'id',
+                align: 'center',
+                valign: 'middle',
+
+            },{
+                field: 'number',
+                title: '食品数量',
+                align: 'center',
+                valign: 'middle',
+
+            },
+            {
+                field: 'foodId',
+                title: '食品Id',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'foodInformation.foodName',
+                title: '食品名称',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'minPurchase',
+                title: '最低库存',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'userId',
+                title: '操作员id',
+                align: 'center',
+                valign: 'middle',
+            }, {
+                field: 'foodInformation.operator',
+                title: '操作员',
+                align: 'center',
+                valign: 'middle',
+            },
+            {
+                field: 'id',
+                title: '操作',
+                width: 120,
+                align: 'center',
+                valign: 'middle',
+                formatter: actionFormatter,
+            },
+
+        ]
+    });
+    function  deleteByIds(value) {
+        layer.confirm(
+            '确定删除当前数据？',{
+                skin:'layui-layer-rim layui-layer-molv',
+                btn: ['确定','取消']
+            }, function (index) {
+                $.ajax({
+                    async:true,
+                    type: 'delete',
+                    url: '/stock/'+value,
+                    dataType : "json",
+                    success: function (result) {
+                        layer.msg(result.msg)
+                        $('#mytab').bootstrapTable('refresh');
+                        layer.close(index);
+                    },
+                    error: function () {
+                        layer.msg('异常');
+                    }
+                });
+            }, function () {
+
+            }
+        )
+    }
+    function editByIds(value) {
+        var id = value;
+        var data = $('#mytab').bootstrapTable('getRowByUniqueId',id);
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim layui-layer-molv', //加上边框
+            title: '修改最低库存',
+            area: ['300px', '250px'], //宽高
+            content:
+                '<label>最低库存</label><input type="text" id="new_minPurchase"><br>\n',
+            btn: ['修改','取消'],
+            yes: function (index,layero) {
+                var minPurchase = $('#new_minPurchase').val();
+                var jsondata = '{"id":"'+data.id+'","minPurchase":"'+minPurchase+'"}';
+                $.ajax({
+                    async:true,
+                    type: 'put',
+                    url: '/stock/',
+                    dataType : "json",
+                    contentType: 'application/json;charset=utf-8',
+                    data: jsondata,
+                    success: function (result) {
+                        layer.msg(result.msg)
+                        $('#mytab').bootstrapTable('refresh');
+                        layer.close(index);
+                    },
+                    error: function () {
+
+                    }
+                });
+            },
+            btn2: function (index,layero) {
+
+            }
+        });
+    }
+    //操作栏的格式化
+    function actionFormatter(value, row, index) {
+        var id = value;
+        var result = "";
+        result += "<a href='javascript:;' class='btn btn-xs blue' title='编辑' onclick=\"editByIds('" + id + "')\"><span class='glyphicon glyphicon-pencil'></span></a>";
+        return result;
+    }
+    $(document).ready(function () {
+        $('#btn_add').click(function () {
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim layui-layer-molv', //加上边框
+                title: '添加新库存',
+                area: ['300px', '250px'], //宽高
+                content:
+                    '    <label>食品名称</label>\n' +
+                    '    <select id="new_foodName">\n' +
+                    '        <option></option>\n' +
+                    '    </select><br>\n' +
+                    '<label>数量</label><input type="text" id="new_number"><br>\n' +
+                    '    <label>价格</label><input type="text" id="new_quantity">' +
+                    '    <label>保质期</label><input type="date" id="new_expiryDate">',
+                success: function(){
+                    $.ajax({
+                        async: true,
+                        url: 'queryFoodInformation',
+                        type: 'get',
+                        datatype: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (result) {
+                            for(var index=0,len=result.length;index<len;index++){
+                                console.log(result);
+                                var foodName = result[index].foodName;
+                                var foodId = result[index].foodId;
+                                $('#new_foodName').append('<option>'+foodId+foodName+'</option>')
+                            }
+                        }
+                    });
+                },
+                btn: ['添加','取消'],
+                yes: function (index,layero) {
+                    var foodName = $('#new_foodName').val();
+                    var number = $('#new_number').val();
+                    var quantity = $('#new_quantity').val();
+                    var expiryDate = $('#new_expiryDate').val();
+                    var jsondata = '{"foodId":"'+parseInt(foodName)+'","number":"'+number+'","quantity":"'+quantity+'","userId":"1","expiryDate":"'+expiryDate+'"}';
+                    $.ajax({
+                        async:true,
+                        type: 'post',
+                        url: '/stock/',
+                        dataType : "json",
+                        contentType: 'application/json;charset=utf-8',
+                        data: jsondata,
+                        success: function (result) {
+                            layer.msg(result.msg)
+                            $('#mytab').bootstrapTable('refresh');
+                            layer.close(index);
+                        },
+                        error: function () {
+
+                        }
+                    });
+                },
+                btn2: function (index,layero) {
+
+                }
+            });
+        });
+        $('#btn_search').click(function () {
+            $('#mytab').bootstrapTable('refresh');
+        });
+    });
+</script>
+</body>
+</html>

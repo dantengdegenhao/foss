@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>下单</title>
+<body>
+    <button id="createOrder">下单</button>
+    <script src="./js/jquery.min.js?v=2.1.4" th:src="@{/static/js/jquery.min.js}"></script>
+    <script>
+        $(document).ready(function () {
+           $('#createOrder').click(function () {
+               var data = {
+                  order:{
+                      orderPrice: 15,
+                      userId: 1,
+                      statusId: 0,
+                      orderStatus: '未付款',
+                      customerName: '收货人',
+                      customerAddress: '收货地址',
+                      customerPhone: '15958019207',
+                  },
+                   orderDetaileds: [
+                       {
+                         foodId: 1,
+                         foodNum: 2,
+                         foodPrice: 7.5
+                       },
+                       {
+                           foodId: 2,
+                           foodNum: 2,
+                           foodPrice: 7.5
+                       }
+                   ]
+               };
+               $.ajax({
+                   async:true,
+                   type: 'post',
+                   url: 'createOrder',
+                   dataType : "json",
+                   contentType: 'application/json;charset=utf-8',
+                   data: JSON.stringify(data),
+                   success: function (result) {
+                       alert(result.msg);
+                   },
+                   error: function () {
+
+                   }
+               })
+           });
+        });
+    </script>
+</body>
+</html>

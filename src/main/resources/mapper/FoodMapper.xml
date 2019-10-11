@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.foss.mapper.FoodDao">
+    <select id="queryFoodType" parameterType="FoodType" resultType="FoodType">
+        select * from foodType where deleteTag = 0
+        <if test="typeName != null and typeName!=''">
+            and typeName like concat ('%',#{typeName},'%')
+        </if>
+    </select>
+    <insert id="insertNewType" parameterType="FoodType">
+        insert into foodType
+         values(0,#{typeName},#{addDate},#{updateDate},#{operator},0)
+    </insert>
+    <update id="deleteFoodType" parameterType="FoodType">
+        update foodType
+        set deleteTag = 1 , updateDate = #{updateDate},operator=#{operator}
+        where typeId=#{typeId}
+    </update>
+    <update id="updateFoodType" parameterType="FoodType">
+        update foodType
+        set typeName = #{typeName} , updateDate = #{updateDate} , operator=#{operator}
+        where typeId=#{typeId}
+    </update>
+    <select id="queryFoodInformation" parameterType="FoodInformation" resultType="FoodInformation">
+        select * from foodInformation where deleteTag = 0
+        <if test="foodName !=null and foodName!=''">
+            and foodName like concat ('%',#{foodName},'%')
+        </if>
+        <if test="typeName != null and typeName!=''">
+            and typeName like concat ('%',#{typeName},'%')
+        </if>
+        <if test="minPrice != null and minPrice!=''">
+            and foodPrice &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null and maxPrice!=''">
+            and foodPrice &lt;= #{maxPrice}
+        </if>
+    </select>
+    <insert id="insertNewFood" parameterType="FoodInformation" useGeneratedKeys="true"  keyProperty="foodId">
+        insert into foodInformation
+        values(0,#{foodName},#{typeName},#{foodPrice},#{img_url},#{addDate},#{updateDate},#{operator},0)
+    </insert>
+    <update id="deleteFood" parameterType="FoodInformation">
+        update foodInformation
+        set deleteTag = 1 , updateDate = #{updateDate},operator=#{operator}
+        where foodId=#{foodId}
+    </update>
+    <update id="updateFood" parameterType="FoodInformation">
+        update foodInformation
+        set foodName = #{foodName} ,typeName=#{typeName},foodPrice=#{foodPrice},updateDate = #{updateDate} , operator=#{operator}
+        where foodId=#{foodId}
+    </update>
+    <resultMap id="FoodStatusWithInf" type="FoodStatus">
+        <id column="statusId" property="statusId"/>
+        <result column="status" property="status"/>
+        <result column="addDate" property="addDate"/>
+        <result column="updateDate" property="updateDate"/>
+        <result column="operator" property="operator"/>
+        <result column="deleteTag" property="deleteTag"/>
+        <association property="foodInformation" javaType="FoodInformation" column="foodId" select="queryFoodInformation"/>
+    </resultMap>
+    <select id="queryFoodStatus" parameterType="FoodStatus" resultMap="FoodStatusWithInf">
+        select * from foodStatus,foodInformation where foodStatus.deleteTag = 0 and foodStatus.foodId = foodInformation.foodId
+        <if test="foodName!=null and foodName!=''">
+            and foodName = #{foodName}
+        </if>
+        <if test="typeName!=null and typeName!=''">
+            and typeName = #{typeName}
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+    </select>
+    <insert id="insertFoodStatus" parameterType="FoodStatus">
+        insert into foodStatus
+        values(0,#{foodId},'未上架',#{addDate},#{updateDate},#{operator},0)
+    </insert>
+    <update id="upperFood" parameterType="FoodStatus">
+        update foodStatus
+        set updateDate=#{updateDate},status = '已上架',operator=#{operator}
+        where statusId = #{statusId}
+    </update>
+    <update id="lowerFood" parameterType="FoodStatus">
+        update foodStatus
+        set updateDate=#{updateDate},status = '已下架',operator=#{operator}
+        where statusId = #{statusId}
+    </update>
+</mapper>

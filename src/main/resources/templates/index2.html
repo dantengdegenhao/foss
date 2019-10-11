@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:if="${name!=null}">
+    欢迎你<a th:text="${name}" style="color: #dd3e3e"></a><a th:href="@{logout}">退出登录</a>
+</div>
+<div th:if="${name==null}">
+    游客欢迎您</a><a th:href="@{login}">登录</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--<meta name="keywords" content="生日蛋糕，聚会蛋糕，蛋糕，奶油蛋糕" />
+<meta name="description" content="蛋糕网，专注生日蛋糕，聚会蛋糕11年，专注，注重品质，是您的不二选择！" />-->
+<title>食品在线商城</title>
+<link href="static/qiantai/images/css.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+function MM_popupMsg(msg) { //v1.0
+  alert(msg);
+}
+</script>
+</head>
+
+<body>
+
+
+<div class="head">
+<!--<div class="logo"><img src="images/logo.jpg" width="350" height="120" /></div>-->
+    <div th:if="${session?.user!=null}">
+    欢迎你<a th:text="${session?.user.name}" style="color: #dd3e3e"></a><a th:href="@{logout}">退出登录</a>
+</div>
+    <div th:if="${session?.user==null}">
+        游客欢迎您</a><a th:href="@{login}">登录</a>
+    </div>
+</div>
+<div class="nav"><ul>
+<li><a href="index.html">首页</a></li>
+    <li><a href="goods3.html">商品页面</a></li>
+<li><a th:href="@{/shippingshow(id=${session?.user.id})}">我的购物车</a></li>
+<li><a href="cart.html">我的订单</a></li>
+</ul></div>
+<div class="main">
+<div class="list">
+  <div class="title">
+    <h1>食品购买</h1>
+  </div>
+  <div class="con">
+    <div class="tab"><a href="/goods3"><img src="static/qiantai/images/11.jpg" width="200" border="0" /></a> <br />
+<div><a href="goods1.html">奥利奥</a></div>
+<div id="goods_102193">￥7.5</div>
+    
+ <div class="order"> <a href="#" >点击查看详情</a></div> </div>
+
+  <!--<div class="tab"><a href="goods3.html"><img src="static/qiantai/images/22.jpg" width="200" border="0" /></a> <br />
+    <a href="goods3.html">蜜饯</a><br />
+    ￥188.00<br />
+   <div class="order"> <a href="#" >点击查看详情</a></div>-->
+  </div>
+ </div>
+ <div class="clear"></div>
+  </div>
+</div>
+<div class="clear"></div>
+</div>
+
+<div class="foot"></div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.foss.mapper.SupplierDao">
+    <select id="querySupplier" parameterType="Supplier" resultType="Supplier">
+        select * from supplier where deleteTag = 0
+        <if test="sname!=null and sname!=''">
+            and sname=#{sname}
+        </if>
+    </select>
+    <insert id="insertSupplier" parameterType="Supplier">
+        insert into supplier
+        values(0,#{sname},#{saddress},#{sphone},#{addDate},#{updateDate},#{operator},0)
+    </insert>
+    <update id="updateSupplier" parameterType="Supplier">
+        update supplier
+        set sname=#{sname},saddress=#{saddress},sphone=#{sphone},updateDate=#{updateDate},operator=#{operator}
+        where sid = #{sid}
+    </update>
+    <update id="deleteSupplier" parameterType="Supplier">
+        update supplier
+        set deleteTag=1,updateDate={updateDate},operator = #{operator}
+        where sid=#{sid}
+    </update>
+</mapper>

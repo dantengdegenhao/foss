@@ -1,0 +1,315 @@
+﻿@charset "utf-8";
+a:link {
+	color: #666;
+}
+a:visited {
+	color: #666;
+}
+a:hover {
+	color: #AC8371;
+}
+a:active {
+	color: #666;
+}
+body {
+	font-family: "宋体", Arial;
+	font-size: 14px;
+	line-height: 25px;
+	color: #666;
+	margin: 0px;
+	padding: 0px;
+}
+*{
+	text-decoration: none;
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+}
+.clear{clear:both}
+.nav ul li {
+	float: left;
+	width: 120px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
+.head {
+	width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 120px;
+}
+.nav {
+	height: 40px;
+	line-height: 40px;
+	background-color: #514141;
+}
+.nav ul {
+	width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.nav ul li a {
+	display: block;
+	color: #FFF;
+}
+.nav ul li a:hover {
+	background-color: #CAAFA6;
+	color: #514141;
+}
+.foot {
+	color: #FFF;
+	background-color: #514141;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	text-align: center;
+}
+.main {
+	width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #CCC;
+}
+.main .title {
+	background-color: #AC8371;
+	height: 35px;
+	line-height: 35px;
+}
+.main .title h1 {
+	background-color: #514141;
+	font-size: 14px;
+	color: #FFF;
+	width: 150px;
+	height: 35px;
+	line-height: 35px;
+	padding-left: 20px;
+	float: left;
+}
+.main .con {
+	padding: 10px;
+}
+#ly {
+	color: #165BA8;
+	font-weight: bold;
+}
+.tab {
+	width: 213px;
+	margin-right: 10px;
+	float: left;
+	border: 1px solid #dddddd;
+	padding: 10px;
+}
+.con form ul li {
+	margin-top: 10px;
+}
+.title h2 {
+	float: right;
+	margin-right: 20px;
+	font-weight: normal;
+	font-size: 14px;
+}
+.title h2 a {
+	color: #FFF;
+}
+.main .tab1 {
+	float: left;
+	width: 480px;
+	margin-left: 5px;
+}
+.main .tab2 {
+	float: left;
+	margin-left: 10px;
+	width: 500px;
+}
+.main .list {
+	float: left;
+	width: 100%;
+	margin-top: 10px;
+}
+.head .logo {
+	float: left;
+}
+.head .login {
+	float: right;
+	margin-top: 80px;
+	font-size: 16px;
+}
+#banner {
+	width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 10px;
+}
+#banner .flash {
+	float: left;
+	border: 1px solid #514141;
+}
+.login {
+	float: right;
+	width: 150px;
+	padding: 10px;
+	border: 5px solid #514141;
+}
+.login h1 {
+	color: #514141;
+	font-size: 16px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #8D553C;
+}
+#dl {
+	height: 50px;
+}
+#banner .login .dl {
+	color: #FFF;
+	background-color: #514141;
+	margin-right: 30px;
+	margin-left: 30px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	float: left;
+	width: 100px;
+	height: 30px;
+	text-align: center;
+}
+.dl a {
+	color: #FFF;
+	font-weight: bold;
+}
+.order {
+	background-color: #AC8371;
+	color: #514141;
+	line-height: 30px;
+	width: 100px;
+	margin-top: 10px;
+	text-align: center;
+}
+.order a {
+	color: #FFF;
+}
+input {
+	height: 25px;
+}
+.main .login1 {
+	width: 500px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 50px;
+}
+form ul li {
+	margin-bottom: 10px;
+}
+.c1 {
+	float: left;
+	width: 300px;
+	height: 35px;
+	padding-left: 20px;
+	line-height: 35px;
+}
+.main .cart {
+	height: 35px;
+	background-color: #EFE7E2;
+}
+.main .cart .c1 span {
+	float: left;
+	margin-right: 20px;
+}
+.orderlist tr td {
+	padding: 5px;
+}
+.main .orderlist {
+	margin-top: 10px;
+	margin-right: 20px;
+	margin-left: 20px;
+}
+.price {
+	font-size: 18px;
+	font-weight: bold;
+	color: #F60;
+}
+#tj {
+	color: #FFF;
+	background-color: #F60;
+	height: 35px;
+	width: 100px;
+	font-size: 16px;
+	font-weight: bold;
+	border: 1px solid #E35B00;
+	line-height: 35px;
+	text-align: center;
+}
+.table {
+	background-color: #CCC;
+	margin-top: 20px;
+}
+.fl {
+	width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 35px;
+	padding-right: 100px;
+	padding-left: 100px;
+}
+.fl ul li {
+	float: left;
+	height: 35px;
+	line-height: 35px;
+	width: 100px;
+}
+.pic {
+	float: left;
+}
+.main .info .xx {
+	float: right;
+	width: 320px;
+	margin-top: 10px;
+}
+.tit {
+	font-size: 16px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+#goodsPrice {
+	font-size: 24px;
+	color: #F00;
+}
+#goods_detailed_price {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.main .content {
+	margin-top: 20px;
+	padding: 10px;
+}
+.title1 {
+	line-height: 35px;
+	background-color: #AC8272;
+	color: #514141;
+	padding-left: 10px;
+}
+.code{ height:auto; padding:20px; border:1px solid #9EC9FE; background:#ECF3FD;}
+.code pre{ font-family:"Courier New";font-size:14px;}
+.code pre code.note{ color:#999}
+.code2{border:1px solid #FEB0B0; background:#FFF1F1; margin-top:10px;}
+.code2 pre{ margin-left:20px; font-size:12px;}#show {
+	height: 300px;
+	width: 1000px;
+	margin-right: auto;
+	margin-left: auto;
+	overflow: hidden;
+}
+.main .info {
+	padding: 10px;
+}
+.type  a {
+	color: #FFF;
+	font-weight: bold;
+	font-size: 16px;
+}
+.cg {
+	font-size: 24px;
+	margin: 20px;
+	color: #F60;
+}
